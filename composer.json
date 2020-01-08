@@ -1,0 +1,44 @@
+{
+  "name": "hughcube/composer-proxy-plugin",
+  "description": "composer proxy plugin",
+  "type": "composer-plugin",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "hugh.li",
+      "email": "hugh.li@foxmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.1",
+    "composer-plugin-api": "^1.0",
+    "hughcube/purl": "^1.0"
+  },
+  "require-dev": {
+    "composer/composer": "^1.6.0",
+    "phpunit/phpunit": "^8.0|^7.0|^6.0",
+    "squizlabs/php_codesniffer": "^3",
+    "phpstan/phpstan": "^0.12.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "HughCube\\Composer\\ProxyPlugin\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "HughCube\\Composer\\ProxyPlugin\\Tests\\": "tests"
+    }
+  },
+  "extra": {
+    "class": "HughCube\\Composer\\ProxyPlugin\\ProxyPlugin"
+  },
+  "scripts": {
+    "test": "phpunit --verbose --coverage-clover=coverage.clover",
+    "phpstan": "phpstan analyse -vvv",
+    "check-style": "phpcs -p --standard=PSR2 src/ -v",
+    "fix-style": "phpcbf -p --standard=PSR2 src/ -v"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
