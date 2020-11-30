@@ -23,11 +23,11 @@
     <a href="https://github.com/hughcube-php/composer-proxy-plugin">
         <img src="https://img.shields.io/badge/php-%3E%3D%207.1-8892BF.svg" alt="PHP Versions Supported">
     </a>
-    <a href="https://packagist.org/packages/hughcube-php/composer-proxy-plugin">
-        <img src="https://poser.pugx.org/hughcube-php/composer-proxy-plugin/version" alt="Latest Stable Version">
+    <a href="https://packagist.org/packages/hughcube/composer-proxy-plugin">
+        <img src="https://poser.pugx.org/hughcube/composer-proxy-plugin/version" alt="Latest Stable Version">
     </a>
-    <a href="https://packagist.org/packages/hughcube-php/composer-proxy-plugin">
-        <img src="https://poser.pugx.org/hughcube-php/composer-proxy-plugin/downloads" alt="Total Downloads">
+    <a href="https://packagist.org/packages/hughcube/composer-proxy-plugin">
+        <img src="https://poser.pugx.org/hughcube/composer-proxy-plugin/downloads" alt="Total Downloads">
     </a>
     <a href="https://github.com/hughcube-php/composer-proxy-plugin/blob/master/LICENSE">
         <img src="https://img.shields.io/badge/license-MIT-428f7e.svg" alt="License">
