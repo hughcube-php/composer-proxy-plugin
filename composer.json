@@ -10,7 +10,7 @@
     }
   ],
   "require": {
-    "php": ">=7.1",
+    "php": ">=8.0",
     "composer-plugin-api": "^1.0",
     "hughcube/purl": "^1.0"
   },
