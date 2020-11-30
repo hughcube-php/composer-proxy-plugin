@@ -32,11 +32,11 @@
     <a href="https://github.com/hughcube-php/composer-proxy-plugin/blob/master/LICENSE">
         <img src="https://img.shields.io/badge/license-MIT-428f7e.svg" alt="License">
     </a>
-    <a href="https://packagist.org/packages/hughcube-php/composer-proxy-plugin">
-        <img src="https://poser.pugx.org/hughcube-php/composer-proxy-plugin/v/unstable" alt="Latest Unstable Version">
+    <a href="https://packagist.org/packages/hughcube/composer-proxy-plugin">
+        <img src="https://poser.pugx.org/hughcube/composer-proxy-plugin/v/unstable" alt="Latest Unstable Version">
     </a>
-    <a href="https://packagist.org/packages/hughcube-php/composer-proxy-plugin">
-        <img src="https://poser.pugx.org/hughcube-php/composer-proxy-plugin/composerlock" alt="composer.lock available">
+    <a href="https://packagist.org/packages/hughcube/composer-proxy-plugin">
+        <img src="https://poser.pugx.org/hughcube/composer-proxy-plugin/composerlock" alt="composer.lock available">
     </a>
 </p>
 
