@@ -88,14 +88,14 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
     }
 
     /**
-     * Get the proxy protocol
+     * Get the proxy protocol.
      *
      * @return array
      */
     protected function getProxyProtocol()
     {
         return [
-            'http' => ['http_proxy', 'HTTP_PROXY', 'CGI_HTTP_PROXY'],
+            'http'  => ['http_proxy', 'HTTP_PROXY', 'CGI_HTTP_PROXY'],
             'https' => ['https_proxy', 'HTTPS_PROXY', 'CGI_HTTPS_PROXY'],
         ];
     }
@@ -195,7 +195,7 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
     }
 
     /**
-     * clear proxy env
+     * clear proxy env.
      */
     protected function clearProxyEnv()
     {
