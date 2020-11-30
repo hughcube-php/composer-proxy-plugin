@@ -2,41 +2,41 @@
 
 
 <p>
-    <a href="https://github.com/hughcube/composer-proxy-plugin/actions?query=workflow%3ATest">
-        <img src="https://github.com/hughcube/composer-proxy-plugin/workflows/Test/badge.svg" alt="Test Actions status">
+    <a href="https://github.com/hughcube-php/composer-proxy-plugin/actions?query=workflow%3ATest">
+        <img src="https://github.com/hughcube-php/composer-proxy-plugin/workflows/Test/badge.svg" alt="Test Actions status">
     </a>
-    <a href="https://github.com/hughcube/composer-proxy-plugin/actions?query=workflow%3ALint">
-        <img src="https://github.com/hughcube/composer-proxy-plugin/workflows/Lint/badge.svg" alt="Lint Actions status">
+    <a href="https://github.com/hughcube-php/composer-proxy-plugin/actions?query=workflow%3ALint">
+        <img src="https://github.com/hughcube-php/composer-proxy-plugin/workflows/Lint/badge.svg" alt="Lint Actions status">
     </a>
     <a href="https://github.styleci.io/repos/232520222">
         <img src="https://github.styleci.io/repos/232520222/shield?branch=master" alt="StyleCI">
     </a>
-    <a href="https://scrutinizer-ci.com/g/hughcube/composer-proxy-plugin/?branch=master">
-        <img src="https://scrutinizer-ci.com/g/hughcube/composer-proxy-plugin/badges/coverage.png?b=master" alt="Code Coverage">
+    <a href="https://scrutinizer-ci.com/g/hughcube-php/composer-proxy-plugin/?branch=master">
+        <img src="https://scrutinizer-ci.com/g/hughcube-php/composer-proxy-plugin/badges/coverage.png?b=master" alt="Code Coverage">
     </a>
-    <a href="https://scrutinizer-ci.com/g/hughcube/composer-proxy-plugin/?branch=master">
-        <img src="https://scrutinizer-ci.com/g/hughcube/composer-proxy-plugin/badges/quality-score.png?b=master" alt="Scrutinizer Code Quality">
+    <a href="https://scrutinizer-ci.com/g/hughcube-php/composer-proxy-plugin/?branch=master">
+        <img src="https://scrutinizer-ci.com/g/hughcube-php/composer-proxy-plugin/badges/quality-score.png?b=master" alt="Scrutinizer Code Quality">
     </a> 
-    <a href="https://scrutinizer-ci.com/g/hughcube/composer-proxy-plugin/?branch=master">
-        <img src="https://scrutinizer-ci.com/g/hughcube/composer-proxy-plugin/badges/code-intelligence.svg?b=master" alt="Code Intelligence Status">
+    <a href="https://scrutinizer-ci.com/g/hughcube-php/composer-proxy-plugin/?branch=master">
+        <img src="https://scrutinizer-ci.com/g/hughcube-php/composer-proxy-plugin/badges/code-intelligence.svg?b=master" alt="Code Intelligence Status">
     </a>        
-    <a href="https://github.com/hughcube/composer-proxy-plugin">
+    <a href="https://github.com/hughcube-php/composer-proxy-plugin">
         <img src="https://img.shields.io/badge/php-%3E%3D%207.1-8892BF.svg" alt="PHP Versions Supported">
     </a>
-    <a href="https://packagist.org/packages/hughcube/composer-proxy-plugin">
-        <img src="https://poser.pugx.org/hughcube/composer-proxy-plugin/version" alt="Latest Stable Version">
+    <a href="https://packagist.org/packages/hughcube-php/composer-proxy-plugin">
+        <img src="https://poser.pugx.org/hughcube-php/composer-proxy-plugin/version" alt="Latest Stable Version">
     </a>
-    <a href="https://packagist.org/packages/hughcube/composer-proxy-plugin">
-        <img src="https://poser.pugx.org/hughcube/composer-proxy-plugin/downloads" alt="Total Downloads">
+    <a href="https://packagist.org/packages/hughcube-php/composer-proxy-plugin">
+        <img src="https://poser.pugx.org/hughcube-php/composer-proxy-plugin/downloads" alt="Total Downloads">
     </a>
-    <a href="https://github.com/hughcube/composer-proxy-plugin/blob/master/LICENSE">
+    <a href="https://github.com/hughcube-php/composer-proxy-plugin/blob/master/LICENSE">
         <img src="https://img.shields.io/badge/license-MIT-428f7e.svg" alt="License">
     </a>
-    <a href="https://packagist.org/packages/hughcube/composer-proxy-plugin">
-        <img src="https://poser.pugx.org/hughcube/composer-proxy-plugin/v/unstable" alt="Latest Unstable Version">
+    <a href="https://packagist.org/packages/hughcube-php/composer-proxy-plugin">
+        <img src="https://poser.pugx.org/hughcube-php/composer-proxy-plugin/v/unstable" alt="Latest Unstable Version">
     </a>
-    <a href="https://packagist.org/packages/hughcube/composer-proxy-plugin">
-        <img src="https://poser.pugx.org/hughcube/composer-proxy-plugin/composerlock" alt="composer.lock available">
+    <a href="https://packagist.org/packages/hughcube-php/composer-proxy-plugin">
+        <img src="https://poser.pugx.org/hughcube-php/composer-proxy-plugin/composerlock" alt="composer.lock available">
     </a>
 </p>
 
