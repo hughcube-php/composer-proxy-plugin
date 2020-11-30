@@ -8,8 +8,8 @@
     <a href="https://github.com/hughcube-php/composer-proxy-plugin/actions?query=workflow%3ALint">
         <img src="https://github.com/hughcube-php/composer-proxy-plugin/workflows/Lint/badge.svg" alt="Lint Actions status">
     </a>
-    <a href="https://github.styleci.io/repos/232520222">
-        <img src="https://github.styleci.io/repos/232520222/shield?branch=master" alt="StyleCI">
+    <a href="https://github.styleci.io/repos/317102477">
+        <img src="https://github.styleci.io/repos/317102477/shield?branch=master" alt="StyleCI">
     </a>
     <a href="https://scrutinizer-ci.com/g/hughcube-php/composer-proxy-plugin/?branch=master">
         <img src="https://scrutinizer-ci.com/g/hughcube-php/composer-proxy-plugin/badges/coverage.png?b=master" alt="Code Coverage">
