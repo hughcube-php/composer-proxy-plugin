@@ -108,8 +108,6 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
         $this->io = $io;
         $this->config = ConfigBuilder::build($composer, $io);
         $this->recordProxyEnv();
-
-        $this->proxyManagerReflection = new ReflectionClass(ProxyManager::class);
     }
 
     /**
@@ -123,34 +121,46 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
         $this->reductionProxyEnv();
         $this->setConfigProxies($event->getProcessedUrl());
 
-        if (class_exists(ProxyManager::class)) {
+        if (class_exists(ProxyManager::class, false)) {
             $this->resetProxyManager();
         }
     }
 
     protected function resetProxyManager()
     {
+        static $reflection,
+        $fullProxyProperty,
+        $safeProxyProperty,
+        $streamsProperty,
+        $hasProxyProperty,
+        $initProxyDataMethod;
+
+        if (null === $reflection) {
+            $reflection = new ReflectionClass(ProxyManager::class);
+
+            $fullProxyProperty = $reflection->getProperty('fullProxy');
+            $fullProxyProperty->setAccessible(true);
+
+            $safeProxyProperty = $reflection->getProperty('safeProxy');
+            $safeProxyProperty->setAccessible(true);
+
+            $streamsProperty = $reflection->getProperty('streams');
+            $streamsProperty->setAccessible(true);
+
+            $hasProxyProperty = $reflection->getProperty('hasProxy');
+            $hasProxyProperty->setAccessible(true);
+
+            $initProxyDataMethod = $reflection->getMethod('initProxyData');
+            $initProxyDataMethod->setAccessible(true);
+        }
+
+
         $proxyManager = ProxyManager::getInstance();
-
-        $property = $this->proxyManagerReflection->getProperty('fullProxy');
-        $property->setAccessible(true);
-        $property->setValue($proxyManager, ['http' => null, 'https' => null]);
-
-        $property = $this->proxyManagerReflection->getProperty('safeProxy');
-        $property->setAccessible(true);
-        $property->setValue($proxyManager, ['http' => null, 'https' => null]);
-
-        $property = $this->proxyManagerReflection->getProperty('streams');
-        $property->setAccessible(true);
-        $property->setValue($proxyManager, ['http' => ['options' => null], 'https' => ['options' => null]]);
-
-        $property = $this->proxyManagerReflection->getProperty('hasProxy');
-        $property->setAccessible(true);
-        $property->setValue($proxyManager, false);
-
-        $method = $this->proxyManagerReflection->getMethod('initProxyData');
-        $method->setAccessible(true);
-        $method->invoke($proxyManager);
+        $fullProxyProperty->setValue($proxyManager, ['http' => null, 'https' => null]);
+        $safeProxyProperty->setValue($proxyManager, ['http' => null, 'https' => null]);
+        $streamsProperty->setValue($proxyManager, ['http' => ['options' => null], 'https' => ['options' => null]]);
+        $hasProxyProperty->setValue($proxyManager, false);
+        $initProxyDataMethod->invoke($proxyManager);
     }
 
     /**
