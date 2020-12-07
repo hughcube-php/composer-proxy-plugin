@@ -95,7 +95,7 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
     protected function getProxyProtocol()
     {
         return [
-            'http'  => ['http_proxy', 'HTTP_PROXY', 'CGI_HTTP_PROXY'],
+            'http' => ['http_proxy', 'HTTP_PROXY', 'CGI_HTTP_PROXY'],
             'https' => ['https_proxy', 'HTTPS_PROXY', 'CGI_HTTPS_PROXY'],
         ];
     }
@@ -123,6 +123,13 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
         $this->reductionProxyEnv();
         $this->setConfigProxies($event->getProcessedUrl());
 
+        if (class_exists(ProxyManager::class)) {
+            $this->resetProxyManager();
+        }
+    }
+
+    protected function resetProxyManager()
+    {
         $proxyManager = ProxyManager::getInstance();
 
         $property = $this->proxyManagerReflection->getProperty('fullProxy');
