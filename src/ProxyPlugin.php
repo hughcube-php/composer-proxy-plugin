@@ -121,6 +121,7 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
         $this->reductionProxyEnv();
         $this->setConfigProxies($event->getProcessedUrl());
 
+        /** composer2.* */
         if (class_exists(ProxyManager::class, false)) {
             $this->resetProxyManager();
         }
