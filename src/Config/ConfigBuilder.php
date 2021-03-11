@@ -23,25 +23,33 @@ use Composer\Json\JsonFile;
 class ConfigBuilder
 {
     /**
+     * @var Config
+     */
+    protected static $config;
+
+    /**
      * Build the config of plugin.
      *
-     * @param Composer         $composer The composer
-     * @param null|IOInterface $io       The composer input/output
+     * @param Composer $composer The composer
+     * @param null|IOInterface $io The composer input/output
      *
      * @return Config
      */
     public static function build(Composer $composer, $io = null)
     {
-        $config = self::getConfigBase($composer, $io);
+        if (!static::$config instanceof Config) {
+            $config = self::getConfigBase($composer, $io);
+            static::$config = new Config($config);
+        }
 
-        return new Config($config);
+        return static::$config;
     }
 
     /**
      * Get the base of data.
      *
-     * @param Composer         $composer The composer
-     * @param null|IOInterface $io       The composer input/output
+     * @param Composer $composer The composer
+     * @param null|IOInterface $io The composer input/output
      *
      * @return array
      */
@@ -57,9 +65,9 @@ class ConfigBuilder
     /**
      * Get the data of the global config.
      *
-     * @param Composer         $composer The composer
-     * @param string           $filename The filename
-     * @param null|IOInterface $io       The composer input/output
+     * @param Composer $composer The composer
+     * @param string $filename The filename
+     * @param null|IOInterface $io The composer input/output
      *
      * @return array
      */
@@ -72,7 +80,7 @@ class ConfigBuilder
             return $config;
         }
 
-        $file = new JsonFile($home.'/'.$filename.'.json');
+        $file = new JsonFile($home . '/' . $filename . '.json');
         if (!$file->exists()) {
             return $config;
         }
@@ -80,7 +88,7 @@ class ConfigBuilder
         $config = self::drawProxyConfig($file->read());
 
         if (!empty($config) && $io instanceof IOInterface && $io->isDebug()) {
-            $io->write('Loading proxies config in file '.$file->getPath());
+            $io->write('Loading proxies config in file ' . $file->getPath());
         }
 
         return $config;
