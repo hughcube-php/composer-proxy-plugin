@@ -96,7 +96,7 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
     protected function getProxyProtocol(): array
     {
         return [
-            'http' => ['http_proxy', 'HTTP_PROXY', 'CGI_HTTP_PROXY'],
+            'http'  => ['http_proxy', 'HTTP_PROXY', 'CGI_HTTP_PROXY'],
             'https' => ['https_proxy', 'HTTPS_PROXY', 'CGI_HTTPS_PROXY'],
         ];
     }
@@ -114,7 +114,8 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
     /**
      * Handling events for downloading files.
      *
-     * @param  PreFileDownloadEvent  $event
+     * @param PreFileDownloadEvent $event
+     *
      * @throws ReflectionException
      */
     public function onPluginPreFileDownload(PreFileDownloadEvent $event)
@@ -172,7 +173,7 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
     /**
      * Set up proxies according to configuration.
      *
-     * @param  string  $url
+     * @param string $url
      */
     protected function setConfigProxies(string $url)
     {
