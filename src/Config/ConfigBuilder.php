@@ -31,11 +31,12 @@ class ConfigBuilder
     /**
      * Build the config of plugin.
      *
-     * @param  Composer  $composer  The composer
-     * @param  IOInterface|null  $io  The composer input/output
+     * @param Composer         $composer The composer
+     * @param IOInterface|null $io       The composer input/output
+     *
+     * @throws ParsingException
      *
      * @return Config
-     * @throws ParsingException
      */
     public static function build(Composer $composer, IOInterface $io = null): Config
     {
@@ -50,11 +51,12 @@ class ConfigBuilder
     /**
      * Get the base of data.
      *
-     * @param  Composer  $composer  The composer
-     * @param  IOInterface|null  $io  The composer input/output
+     * @param Composer         $composer The composer
+     * @param IOInterface|null $io       The composer input/output
+     *
+     * @throws ParsingException
      *
      * @return array
-     * @throws ParsingException
      */
     private static function getConfigBase(Composer $composer, IOInterface $io = null): array
     {
@@ -68,12 +70,13 @@ class ConfigBuilder
     /**
      * Get the data of the global config.
      *
-     * @param  Composer  $composer  The composer
-     * @param  string  $filename  The filename
-     * @param  IOInterface|null  $io  The composer input/output
+     * @param Composer         $composer The composer
+     * @param string           $filename The filename
+     * @param IOInterface|null $io       The composer input/output
+     *
+     * @throws ParsingException
      *
      * @return array
-     * @throws ParsingException
      */
     private static function getGlobalConfig(Composer $composer, string $filename, IOInterface $io = null): array
     {
@@ -101,7 +104,7 @@ class ConfigBuilder
     /**
      * Get the home directory of composer.
      *
-     * @param  Composer  $composer  The composer
+     * @param Composer $composer The composer
      *
      * @return string|null
      */
@@ -121,7 +124,7 @@ class ConfigBuilder
     /**
      * Draw the config of proxy.
      *
-     * @param  mixed  $data
+     * @param mixed $data
      *
      * @return array
      */
