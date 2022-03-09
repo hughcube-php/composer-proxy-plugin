@@ -21,6 +21,7 @@ use Composer\Util\Http\ProxyManager;
 use HughCube\Composer\ProxyPlugin\Config\Config;
 use HughCube\Composer\ProxyPlugin\Config\ConfigBuilder;
 use ReflectionClass;
+use ReflectionException;
 
 /**
  * Composer plugin.
@@ -50,14 +51,14 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
     protected $io;
 
     /**
-     * @var ReflectionClass
+     * @var array
      */
-    protected $proxyManagerReflection;
+    protected $reflectionCache = [];
 
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             PluginEvents::PRE_FILE_DOWNLOAD => [
@@ -71,7 +72,7 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
      *
      * @return array
      */
-    protected function getProxyEnvNames()
+    protected function getProxyEnvNames(): array
     {
         return [
             'http_proxy',
@@ -92,7 +93,7 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
      *
      * @return array
      */
-    protected function getProxyProtocol()
+    protected function getProxyProtocol(): array
     {
         return [
             'http' => ['http_proxy', 'HTTP_PROXY', 'CGI_HTTP_PROXY'],
@@ -113,7 +114,8 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
     /**
      * Handling events for downloading files.
      *
-     * @param PreFileDownloadEvent $event
+     * @param  PreFileDownloadEvent  $event
+     * @throws ReflectionException
      */
     public function onPluginPreFileDownload(PreFileDownloadEvent $event)
     {
@@ -123,53 +125,56 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
 
         /** composer2.* */
         if (class_exists(ProxyManager::class, false)) {
-            $this->resetProxyManager();
+            $this->resetProxyManager($event);
         }
     }
 
-    protected function resetProxyManager()
+    /**
+     * @throws ReflectionException
+     */
+    protected function resetProxyManager(PreFileDownloadEvent $event)
     {
-        static $reflection,
-        $fullProxyProperty,
-        $safeProxyProperty,
-        $streamsProperty,
-        $hasProxyProperty,
-        $initProxyDataMethod;
+        $httpDownloader = $event->getHttpDownloader();
 
-        if (null === $reflection) {
-            $reflection = new ReflectionClass(ProxyManager::class);
+        $reflection = new ReflectionClass($httpDownloader);
+        $curlProperty = $reflection->getProperty('curl');
+        $curlProperty->setAccessible(true);
+        $curlDownloader = $curlProperty->getValue($httpDownloader);
 
-            $fullProxyProperty = $reflection->getProperty('fullProxy');
-            $fullProxyProperty->setAccessible(true);
+        $reflection = new ReflectionClass($curlDownloader);
+        $proxyManagerProperty = $reflection->getProperty('proxyManager');
+        $proxyManagerProperty->setAccessible(true);
+        $proxyManager = $proxyManagerProperty->getValue($curlDownloader);
 
-            $safeProxyProperty = $reflection->getProperty('safeProxy');
-            $safeProxyProperty->setAccessible(true);
+        $reflection = new ReflectionClass($proxyManager);
 
-            $streamsProperty = $reflection->getProperty('streams');
-            $streamsProperty->setAccessible(true);
-
-            $hasProxyProperty = $reflection->getProperty('hasProxy');
-            $hasProxyProperty->setAccessible(true);
-
-            $initProxyDataMethod = $reflection->getMethod('initProxyData');
-            $initProxyDataMethod->setAccessible(true);
-        }
-
-
-        $proxyManager = ProxyManager::getInstance();
+        $fullProxyProperty = $reflection->getProperty('fullProxy');
+        $fullProxyProperty->setAccessible(true);
         $fullProxyProperty->setValue($proxyManager, ['http' => null, 'https' => null]);
+
+        $safeProxyProperty = $reflection->getProperty('safeProxy');
+        $safeProxyProperty->setAccessible(true);
         $safeProxyProperty->setValue($proxyManager, ['http' => null, 'https' => null]);
+
+        $streamsProperty = $reflection->getProperty('streams');
+        $streamsProperty->setAccessible(true);
         $streamsProperty->setValue($proxyManager, ['http' => ['options' => null], 'https' => ['options' => null]]);
+
+        $hasProxyProperty = $reflection->getProperty('hasProxy');
+        $hasProxyProperty->setAccessible(true);
         $hasProxyProperty->setValue($proxyManager, false);
+
+        $initProxyDataMethod = $reflection->getMethod('initProxyData');
+        $initProxyDataMethod->setAccessible(true);
         $initProxyDataMethod->invoke($proxyManager);
     }
 
     /**
      * Set up proxies according to configuration.
      *
-     * @param string $url
+     * @param  string  $url
      */
-    protected function setConfigProxies($url)
+    protected function setConfigProxies(string $url)
     {
         foreach ($this->getProxyProtocol() as $protocol => $names) {
             $method = "get{$protocol}Proxy";
@@ -229,7 +234,6 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
      */
     public function deactivate(Composer $composer, IOInterface $io)
     {
-        return true;
     }
 
     /**
@@ -237,6 +241,5 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
      */
     public function uninstall(Composer $composer, IOInterface $io)
     {
-        return true;
     }
 }

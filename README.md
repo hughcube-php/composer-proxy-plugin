@@ -55,7 +55,7 @@ $ composer global require hughcube/composer-proxy-plugin -vvv
         "active": true,
         "protocol": "http",
         "nonProxyHosts": null,
-        "proxyHosts": "packagist.phpcomposer.com|repo.packagist.org",
+        "proxyHosts": "packagist.org|*.packagist.org",
         "host": "127.0.0.1",
         "port": "1087",
         "username": null,

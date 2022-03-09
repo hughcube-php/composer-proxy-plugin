@@ -1,6 +1,6 @@
 <?php
 
-namespace HughCube\PUrl\Tests;
+namespace HughCube\Composer\ProxyPlugin\Tests;
 
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\Plugin\PluginInterface;

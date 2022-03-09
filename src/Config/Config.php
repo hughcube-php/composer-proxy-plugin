@@ -28,7 +28,7 @@ final class Config
     /**
      * Constructor.
      *
-     * @param array $proxies The config
+     * @param  array  $proxies  The config
      */
     public function __construct(array $proxies)
     {
@@ -38,11 +38,11 @@ final class Config
     /**
      * Get the http proxy of url.
      *
-     * @param string $url
-     *
+     * @param  string  $url
+     * @param  bool  $isSsl
      * @return null|string
      */
-    public function getHttpProxy($url, $isSsl = false)
+    public function getHttpProxy(string $url, bool $isSsl = false)
     {
         $protocol = $isSsl ? 'https' : 'http';
 
@@ -52,23 +52,21 @@ final class Config
         }
 
         return Url::instance()
-            ->withScheme((isset($proxy['protocol']) ? $proxy['protocol'] : null))
-            ->withHost((isset($proxy['host']) ? $proxy['host'] : null))
-            ->withPort((isset($proxy['port']) ? $proxy['port'] : null))
-            ->withUserInfo(
-                (isset($proxy['username']) ? $proxy['username'] : null),
-                (isset($proxy['password']) ? $proxy['password'] : null)
-            )->toString();
+            ->withScheme(($proxy['protocol'] ?? null))
+            ->withHost(($proxy['host'] ?? null))
+            ->withPort(($proxy['port'] ?? null))
+            ->withUserInfo(($proxy['username'] ?? null), ($proxy['password'] ?? null))
+            ->toString();
     }
 
     /**
      * Get the https proxy of url.
      *
-     * @param string $url
+     * @param  string  $url
      *
      * @return null|string
      */
-    public function getHttpsProxy($url)
+    public function getHttpsProxy(string $url)
     {
         return $this->getHttpProxy($url, true);
     }
@@ -76,12 +74,12 @@ final class Config
     /**
      * Get the proxy of url and protocol.
      *
-     * @param string $url
-     * @param string $protocol
+     * @param  string  $url
+     * @param  string  $protocol
      *
      * @return null|array
      */
-    private function getProxy($url, $protocol)
+    private function getProxy(string $url, string $protocol)
     {
         $url = Url::instance($url);
 
@@ -94,12 +92,12 @@ final class Config
                 continue;
             }
 
-            $nonProxyHosts = isset($proxy['nonProxyHosts']) ? $proxy['nonProxyHosts'] : null;
+            $nonProxyHosts = $proxy['nonProxyHosts'] ?? null;
             if (null != $nonProxyHosts && $url->matchHost($proxy['nonProxyHosts'])) {
                 continue;
             }
 
-            $proxyHosts = isset($proxy['proxyHosts']) ? $proxy['proxyHosts'] : null;
+            $proxyHosts = $proxy['proxyHosts'] ?? null;
             if (null != $proxyHosts && !$url->matchHost($proxy['proxyHosts'])) {
                 continue;
             }

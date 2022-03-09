@@ -14,6 +14,7 @@ namespace HughCube\Composer\ProxyPlugin\Config;
 use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Json\JsonFile;
+use Seld\JsonLint\ParsingException;
 
 /**
  * Plugin Config builder.
@@ -30,12 +31,13 @@ class ConfigBuilder
     /**
      * Build the config of plugin.
      *
-     * @param Composer $composer The composer
-     * @param null|IOInterface $io The composer input/output
+     * @param  Composer  $composer  The composer
+     * @param  IOInterface|null  $io  The composer input/output
      *
      * @return Config
+     * @throws ParsingException
      */
-    public static function build(Composer $composer, $io = null)
+    public static function build(Composer $composer, IOInterface $io = null): Config
     {
         if (!static::$config instanceof Config) {
             $config = self::getConfigBase($composer, $io);
@@ -48,12 +50,13 @@ class ConfigBuilder
     /**
      * Get the base of data.
      *
-     * @param Composer $composer The composer
-     * @param null|IOInterface $io The composer input/output
+     * @param  Composer  $composer  The composer
+     * @param  IOInterface|null  $io  The composer input/output
      *
      * @return array
+     * @throws ParsingException
      */
-    private static function getConfigBase(Composer $composer, $io = null)
+    private static function getConfigBase(Composer $composer, IOInterface $io = null): array
     {
         $globalPackageConfig = self::getGlobalConfig($composer, 'composer', $io);
         $globalConfig = self::getGlobalConfig($composer, 'config', $io);
@@ -65,13 +68,14 @@ class ConfigBuilder
     /**
      * Get the data of the global config.
      *
-     * @param Composer $composer The composer
-     * @param string $filename The filename
-     * @param null|IOInterface $io The composer input/output
+     * @param  Composer  $composer  The composer
+     * @param  string  $filename  The filename
+     * @param  IOInterface|null  $io  The composer input/output
      *
      * @return array
+     * @throws ParsingException
      */
-    private static function getGlobalConfig(Composer $composer, $filename, $io = null)
+    private static function getGlobalConfig(Composer $composer, string $filename, IOInterface $io = null): array
     {
         $config = [];
 
@@ -80,7 +84,7 @@ class ConfigBuilder
             return $config;
         }
 
-        $file = new JsonFile($home . '/' . $filename . '.json');
+        $file = new JsonFile($home.'/'.$filename.'.json');
         if (!$file->exists()) {
             return $config;
         }
@@ -88,7 +92,7 @@ class ConfigBuilder
         $config = self::drawProxyConfig($file->read());
 
         if (!empty($config) && $io instanceof IOInterface && $io->isDebug()) {
-            $io->write('Loading proxies config in file ' . $file->getPath());
+            $io->write('Loading proxies config in file '.$file->getPath());
         }
 
         return $config;
@@ -97,7 +101,7 @@ class ConfigBuilder
     /**
      * Get the home directory of composer.
      *
-     * @param Composer $composer The composer
+     * @param  Composer  $composer  The composer
      *
      * @return string|null
      */
@@ -117,11 +121,11 @@ class ConfigBuilder
     /**
      * Draw the config of proxy.
      *
-     * @param mixed $data
+     * @param  mixed  $data
      *
      * @return array
      */
-    private static function drawProxyConfig($data)
+    private static function drawProxyConfig($data): array
     {
         if (isset($data['config'], $data['config']['proxies']) && is_array($data['config']['proxies'])) {
             return $data['config']['proxies'];
