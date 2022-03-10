@@ -25,6 +25,3 @@ jobs:
 
       - name: Run php-cs-fxier
         run: composer run-script fix-style
-
-      - name: Run phpstan
-        run: composer run-script phpstan

@@ -22,6 +22,7 @@ use HughCube\Composer\ProxyPlugin\Config\Config;
 use HughCube\Composer\ProxyPlugin\Config\ConfigBuilder;
 use ReflectionClass;
 use ReflectionException;
+use Seld\JsonLint\ParsingException;
 
 /**
  * Composer plugin.
@@ -33,7 +34,7 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
     /**
      * @var array
      */
-    protected $originProxyEnv = [];
+    protected $originProxyEnv = null;
 
     /**
      * @var Config
@@ -53,18 +54,18 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
     /**
      * @var array
      */
-    protected $reflectionCache = [];
+    protected $reflectionCache = array();
 
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents(): array
+    public static function getSubscribedEvents()
     {
-        return [
-            PluginEvents::PRE_FILE_DOWNLOAD => [
-                ['onPluginPreFileDownload', PHP_INT_MIN],
-            ],
-        ];
+        return array(
+            PluginEvents::PRE_FILE_DOWNLOAD => array(
+                array('onPluginPreFileDownload', PHP_INT_MIN),
+            ),
+        );
     }
 
     /**
@@ -72,9 +73,9 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
      *
      * @return array
      */
-    protected function getProxyEnvNames(): array
+    protected function getProxyEnvNames()
     {
-        return [
+        return array(
             'http_proxy',
             'HTTP_PROXY',
             'CGI_HTTP_PROXY',
@@ -85,7 +86,7 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
 
             'no_proxy',
             'NO_PROXY',
-        ];
+        );
     }
 
     /**
@@ -93,21 +94,23 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
      *
      * @return array
      */
-    protected function getProxyProtocol(): array
+    protected function getProxyProtocol()
     {
-        return [
-            'http' => ['http_proxy', 'HTTP_PROXY', 'CGI_HTTP_PROXY'],
-            'https' => ['https_proxy', 'HTTPS_PROXY', 'CGI_HTTPS_PROXY'],
-        ];
+        return array(
+            'http' => array('http_proxy', 'HTTP_PROXY', 'CGI_HTTP_PROXY'),
+            'https' => array('https_proxy', 'HTTPS_PROXY', 'CGI_HTTPS_PROXY'),
+        );
     }
 
     /**
      * {@inheritdoc}
+     * @throws ParsingException
      */
     public function activate(Composer $composer, IOInterface $io)
     {
         $this->io = $io;
         $this->config = ConfigBuilder::build($composer, $io);
+
         $this->recordProxyEnv();
     }
 
@@ -119,14 +122,16 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
      */
     public function onPluginPreFileDownload(PreFileDownloadEvent $event)
     {
+        /** Record the previous value. */
+        $this->recordProxyEnv();
+
+        /** Set the current agent based on the configuration. */
+        $this->setConfigProxies($event->getProcessedUrl());
+        $this->resetProxyManager($event);
+
+        /** Restore the previous configuration */
         $this->clearProxyEnv();
         $this->reductionProxyEnv();
-        $this->setConfigProxies($event->getProcessedUrl());
-
-        /** composer2.* */
-        if (class_exists(ProxyManager::class, false)) {
-            $this->resetProxyManager($event);
-        }
     }
 
     /**
@@ -148,22 +153,30 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
 
         $reflection = new ReflectionClass($proxyManager);
 
+        /** @see ProxyManager::$fullProxy */
         $fullProxyProperty = $reflection->getProperty('fullProxy');
         $fullProxyProperty->setAccessible(true);
-        $fullProxyProperty->setValue($proxyManager, ['http' => null, 'https' => null]);
+        $fullProxyProperty->setValue($proxyManager, array('http' => null, 'https' => null));
 
+        /** @see ProxyManager::$safeProxy */
         $safeProxyProperty = $reflection->getProperty('safeProxy');
         $safeProxyProperty->setAccessible(true);
-        $safeProxyProperty->setValue($proxyManager, ['http' => null, 'https' => null]);
+        $safeProxyProperty->setValue($proxyManager, array('http' => null, 'https' => null));
 
+        /** @see ProxyManager::$streams */
         $streamsProperty = $reflection->getProperty('streams');
         $streamsProperty->setAccessible(true);
-        $streamsProperty->setValue($proxyManager, ['http' => ['options' => null], 'https' => ['options' => null]]);
+        $streamsProperty->setValue(
+            $proxyManager,
+            array('http' => array('options' => null), 'https' => array('options' => null))
+        );
 
+        /** @see ProxyManager::$hasProxy */
         $hasProxyProperty = $reflection->getProperty('hasProxy');
         $hasProxyProperty->setAccessible(true);
         $hasProxyProperty->setValue($proxyManager, false);
 
+        /** @see ProxyManager::initProxyData() */
         $initProxyDataMethod = $reflection->getMethod('initProxyData');
         $initProxyDataMethod->setAccessible(true);
         $initProxyDataMethod->invoke($proxyManager);
@@ -174,7 +187,7 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
      *
      * @param  string  $url
      */
-    protected function setConfigProxies(string $url)
+    protected function setConfigProxies($url)
     {
         foreach ($this->getProxyProtocol() as $protocol => $names) {
             $method = "get{$protocol}Proxy";
@@ -182,7 +195,7 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
                 continue;
             }
 
-            $proxy = call_user_func([$this->config, $method], $url);
+            $proxy = call_user_func(array($this->config, $method), $url);
             if (null == $proxy) {
                 continue;
             }
@@ -198,6 +211,7 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
      */
     protected function recordProxyEnv()
     {
+        $this->originProxyEnv = array();
         foreach ($this->getProxyEnvNames() as $name) {
             if (array_key_exists($name, $_SERVER)) {
                 $this->originProxyEnv[$name] = $_SERVER[$name];
@@ -223,9 +237,7 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
     protected function clearProxyEnv()
     {
         foreach ($this->getProxyEnvNames() as $name) {
-            if (array_key_exists($name, $_SERVER)) {
-                unset($_SERVER[$name]);
-            }
+            unset($_SERVER[$name]);
         }
     }
 

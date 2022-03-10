@@ -42,7 +42,7 @@ final class Config
      * @param  bool  $isSsl
      * @return null|string
      */
-    public function getHttpProxy(string $url, bool $isSsl = false)
+    public function getHttpProxy($url, $isSsl = false)
     {
         $protocol = $isSsl ? 'https' : 'http';
 
@@ -52,10 +52,13 @@ final class Config
         }
 
         return Url::instance()
-            ->withScheme(($proxy['protocol'] ?? null))
-            ->withHost(($proxy['host'] ?? null))
-            ->withPort(($proxy['port'] ?? null))
-            ->withUserInfo(($proxy['username'] ?? null), ($proxy['password'] ?? null))
+            ->withScheme((isset($proxy['protocol']) ? $proxy['protocol'] : null))
+            ->withHost((isset($proxy['host']) ? $proxy['host'] : null))
+            ->withPort((isset($proxy['port']) ? $proxy['port'] : null))
+            ->withUserInfo(
+                (isset($proxy['username']) ? $proxy['username'] : null),
+                (isset($proxy['password']) ? $proxy['password'] : null)
+            )
             ->toString();
     }
 
@@ -66,7 +69,7 @@ final class Config
      *
      * @return null|string
      */
-    public function getHttpsProxy(string $url)
+    public function getHttpsProxy($url)
     {
         return $this->getHttpProxy($url, true);
     }
@@ -79,7 +82,7 @@ final class Config
      *
      * @return null|array
      */
-    private function getProxy(string $url, string $protocol)
+    private function getProxy($url, $protocol)
     {
         $url = Url::instance($url);
 
@@ -92,12 +95,12 @@ final class Config
                 continue;
             }
 
-            $nonProxyHosts = $proxy['nonProxyHosts'] ?? null;
+            $nonProxyHosts = isset($proxy['nonProxyHosts']) ? $proxy['nonProxyHosts'] : null;
             if (null != $nonProxyHosts && $url->matchHost($proxy['nonProxyHosts'])) {
                 continue;
             }
 
-            $proxyHosts = $proxy['proxyHosts'] ?? null;
+            $proxyHosts = isset($proxy['proxyHosts']) ? $proxy['proxyHosts'] : null;
             if (null != $proxyHosts && !$url->matchHost($proxy['proxyHosts'])) {
                 continue;
             }

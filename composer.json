@@ -10,15 +10,12 @@
         }
     ],
     "require": {
-        "php": ">=7.0",
-        "composer-plugin-api": ">=1.0",
+        "composer/composer": ">=2.0",
         "hughcube/purl": ">=1.0"
     },
     "require-dev": {
-        "composer/composer": "^2.0|^1.0",
         "phpunit/phpunit": "*",
-        "squizlabs/php_codesniffer": "*",
-        "phpstan/phpstan": "*"
+        "squizlabs/php_codesniffer": "*"
     },
     "autoload": {
         "psr-4": {
@@ -35,7 +32,6 @@
     },
     "scripts": {
         "test": "phpunit --verbose --coverage-clover=coverage.clover",
-        "phpstan": "phpstan analyse -vvv",
         "check-style": "phpcs -p --standard=PSR2 src/ -v",
         "fix-style": "phpcbf -p --standard=PSR2 src/ -v"
     },

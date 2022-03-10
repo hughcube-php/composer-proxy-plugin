@@ -37,7 +37,7 @@ class ConfigBuilder
      * @return Config
      * @throws ParsingException
      */
-    public static function build(Composer $composer, IOInterface $io = null): Config
+    public static function build(Composer $composer, IOInterface $io = null)
     {
         if (!static::$config instanceof Config) {
             $config = self::getConfigBase($composer, $io);
@@ -56,7 +56,7 @@ class ConfigBuilder
      * @return array
      * @throws ParsingException
      */
-    private static function getConfigBase(Composer $composer, IOInterface $io = null): array
+    private static function getConfigBase(Composer $composer, IOInterface $io = null)
     {
         $globalPackageConfig = self::getGlobalConfig($composer, 'composer', $io);
         $globalConfig = self::getGlobalConfig($composer, 'config', $io);
@@ -75,9 +75,9 @@ class ConfigBuilder
      * @return array
      * @throws ParsingException
      */
-    private static function getGlobalConfig(Composer $composer, string $filename, IOInterface $io = null): array
+    private static function getGlobalConfig(Composer $composer, $filename, IOInterface $io = null)
     {
-        $config = [];
+        $config = array();
 
         $home = self::getComposerHome($composer);
         if (false == $home) {
@@ -125,7 +125,7 @@ class ConfigBuilder
      *
      * @return array
      */
-    private static function drawProxyConfig($data): array
+    private static function drawProxyConfig($data)
     {
         if (isset($data['config'], $data['config']['proxies']) && is_array($data['config']['proxies'])) {
             return $data['config']['proxies'];
