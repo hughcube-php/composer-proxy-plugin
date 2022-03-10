@@ -80,7 +80,7 @@ class ConfigBuilder
      */
     private static function getGlobalConfig(Composer $composer, $filename, IOInterface $io = null)
     {
-        $config = array();
+        $config = [];
 
         $home = self::getComposerHome($composer);
         if (false == $home) {

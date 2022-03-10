@@ -54,18 +54,18 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
     /**
      * @var array
      */
-    protected $reflectionCache = array();
+    protected $reflectionCache = [];
 
     /**
      * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
-        return array(
-            PluginEvents::PRE_FILE_DOWNLOAD => array(
-                array('onPluginPreFileDownload', PHP_INT_MIN),
-            ),
-        );
+        return [
+            PluginEvents::PRE_FILE_DOWNLOAD => [
+                ['onPluginPreFileDownload', PHP_INT_MIN],
+            ],
+        ];
     }
 
     /**
@@ -75,7 +75,7 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
      */
     protected function getProxyEnvNames()
     {
-        return array(
+        return [
             'http_proxy',
             'HTTP_PROXY',
             'CGI_HTTP_PROXY',
@@ -86,7 +86,7 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
 
             'no_proxy',
             'NO_PROXY',
-        );
+        ];
     }
 
     /**
@@ -96,14 +96,15 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
      */
     protected function getProxyProtocol()
     {
-        return array(
-            'http' => array('http_proxy', 'HTTP_PROXY', 'CGI_HTTP_PROXY'),
-            'https' => array('https_proxy', 'HTTPS_PROXY', 'CGI_HTTPS_PROXY'),
-        );
+        return [
+            'http'  => ['http_proxy', 'HTTP_PROXY', 'CGI_HTTP_PROXY'],
+            'https' => ['https_proxy', 'HTTPS_PROXY', 'CGI_HTTPS_PROXY'],
+        ];
     }
 
     /**
      * {@inheritdoc}
+     *
      * @throws ParsingException
      */
     public function activate(Composer $composer, IOInterface $io)
@@ -117,7 +118,8 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
     /**
      * Handling events for downloading files.
      *
-     * @param  PreFileDownloadEvent  $event
+     * @param PreFileDownloadEvent $event
+     *
      * @throws ReflectionException
      */
     public function onPluginPreFileDownload(PreFileDownloadEvent $event)
@@ -156,19 +158,19 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
         /** @see ProxyManager::$fullProxy */
         $fullProxyProperty = $reflection->getProperty('fullProxy');
         $fullProxyProperty->setAccessible(true);
-        $fullProxyProperty->setValue($proxyManager, array('http' => null, 'https' => null));
+        $fullProxyProperty->setValue($proxyManager, ['http' => null, 'https' => null]);
 
         /** @see ProxyManager::$safeProxy */
         $safeProxyProperty = $reflection->getProperty('safeProxy');
         $safeProxyProperty->setAccessible(true);
-        $safeProxyProperty->setValue($proxyManager, array('http' => null, 'https' => null));
+        $safeProxyProperty->setValue($proxyManager, ['http' => null, 'https' => null]);
 
         /** @see ProxyManager::$streams */
         $streamsProperty = $reflection->getProperty('streams');
         $streamsProperty->setAccessible(true);
         $streamsProperty->setValue(
             $proxyManager,
-            array('http' => array('options' => null), 'https' => array('options' => null))
+            ['http' => ['options' => null], 'https' => ['options' => null]]
         );
 
         /** @see ProxyManager::$hasProxy */
@@ -185,7 +187,7 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
     /**
      * Set up proxies according to configuration.
      *
-     * @param  string  $url
+     * @param string $url
      */
     protected function setConfigProxies($url)
     {
@@ -195,7 +197,7 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
                 continue;
             }
 
-            $proxy = call_user_func(array($this->config, $method), $url);
+            $proxy = call_user_func([$this->config, $method], $url);
             if (null == $proxy) {
                 continue;
             }
@@ -211,7 +213,7 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
      */
     protected function recordProxyEnv()
     {
-        $this->originProxyEnv = array();
+        $this->originProxyEnv = [];
         foreach ($this->getProxyEnvNames() as $name) {
             if (array_key_exists($name, $_SERVER)) {
                 $this->originProxyEnv[$name] = $_SERVER[$name];
