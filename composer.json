@@ -11,10 +11,11 @@
     ],
     "require": {
         "php": ">=5.3.2",
-        "composer/composer": ">=2.0",
-        "hughcube/purl": ">=1.0"
+        "hughcube/purl": ">=1.0",
+        "composer-plugin-api": ">=2.0"
     },
     "require-dev": {
+        "composer/composer": "*",
         "phpunit/phpunit": "*",
         "squizlabs/php_codesniffer": "*"
     },
