@@ -28,7 +28,7 @@ final class Config
     /**
      * Constructor.
      *
-     * @param  array  $proxies  The config
+     * @param array $proxies The config
      */
     public function __construct(array $proxies)
     {
@@ -38,8 +38,9 @@ final class Config
     /**
      * Get the http proxy of url.
      *
-     * @param  string  $url
-     * @param  bool  $isSsl
+     * @param string $url
+     * @param bool   $isSsl
+     *
      * @return null|string
      */
     public function getHttpProxy($url, $isSsl = false)
@@ -65,7 +66,7 @@ final class Config
     /**
      * Get the https proxy of url.
      *
-     * @param  string  $url
+     * @param string $url
      *
      * @return null|string
      */
@@ -77,8 +78,8 @@ final class Config
     /**
      * Get the proxy of url and protocol.
      *
-     * @param  string  $url
-     * @param  string  $protocol
+     * @param string $url
+     * @param string $protocol
      *
      * @return null|array
      */
