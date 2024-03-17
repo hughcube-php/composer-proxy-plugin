@@ -28,7 +28,7 @@ final class Config
     /**
      * Constructor.
      *
-     * @param array $proxies The config
+     * @param  array  $proxies  The config
      */
     public function __construct(array $proxies)
     {
@@ -38,8 +38,8 @@ final class Config
     /**
      * Get the http proxy of url.
      *
-     * @param string $url
-     * @param bool   $isSsl
+     * @param  string  $url
+     * @param  bool  $isSsl
      *
      * @return null|string
      */
@@ -66,7 +66,7 @@ final class Config
     /**
      * Get the https proxy of url.
      *
-     * @param string $url
+     * @param  string  $url
      *
      * @return null|string
      */
@@ -78,14 +78,27 @@ final class Config
     /**
      * Get the proxy of url and protocol.
      *
-     * @param string $url
-     * @param string $protocol
+     * @param  string  $url
+     * @param  string  $protocol
      *
      * @return null|array
      */
     private function getProxy($url, $protocol)
     {
         $url = Url::instance($url);
+
+        if (empty($this->proxies)) {
+            $proxyUrl = Url::parse(isset($_SERVER['COMPOSER_PROXY']) ? $_SERVER['COMPOSER_PROXY'] : null);
+            if ($proxyUrl instanceof Url) {
+                return array(
+                    'protocol' => $proxyUrl->getScheme(),
+                    'host' => $proxyUrl->getHost(),
+                    'port' => $proxyUrl->getPort(),
+                    'username' => $proxyUrl->getUser(),
+                    'password' => $proxyUrl->getPass()
+                );
+            }
+        }
 
         foreach ($this->proxies as $proxy) {
             if (isset($proxy['active']) && !$proxy['active']) {
