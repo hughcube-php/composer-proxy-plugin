@@ -10,3 +10,5 @@ composer.lock
 phpunit.xml
 coverage.clover
 ocular.phar
+composer
+composer.phar

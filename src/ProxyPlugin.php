@@ -110,6 +110,9 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
     {
         $this->io = $io;
         $this->config = ConfigBuilder::build($composer, $io);
+
+        /** Record the previous value. */
+        $this->recordProxyEnvIfNull();
     }
 
     /**
@@ -121,7 +124,7 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
     public function onPluginPreFileDownload(PreFileDownloadEvent $event)
     {
         /** Record the previous value. */
-        $proxyEnv = $this->getProxyEnv();
+        $this->recordProxyEnvIfNull();
 
         /** Set the current agent based on the configuration. */
         $this->setConfigProxies($event->getProcessedUrl());
@@ -132,7 +135,7 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
         }
 
         /** Restore the previous configuration */
-        $this->setProxyEnv($proxyEnv);
+        $this->setProxyEnv($this->originProxyEnv);
     }
 
     /**
@@ -177,6 +180,21 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
         if (!$reflection->hasMethod('initProxyData')
             && $reflection->hasMethod('getProxyData')
         ) {
+            /** @see ProxyManager::$httpsProxy */
+            $httpsProxyProperty = $reflection->getProperty('httpsProxy');
+            $httpsProxyProperty->setAccessible(true);
+            $httpsProxyProperty->setValue($proxyManager, null);
+
+            /** @see ProxyManager::$httpProxy */
+            $httpsProxyProperty = $reflection->getProperty('httpProxy');
+            $httpsProxyProperty->setAccessible(true);
+            $httpsProxyProperty->setValue($proxyManager, null);
+
+            /** @see ProxyManager::$noProxyHandler */
+            $httpsProxyProperty = $reflection->getProperty('noProxyHandler');
+            $httpsProxyProperty->setAccessible(true);
+            $httpsProxyProperty->setValue($proxyManager, null);
+
             /** @see ProxyManager::getProxyData() */
             $getProxyDataMethod = $reflection->getMethod('getProxyData');
             $getProxyDataMethod->invoke($proxyManager);
@@ -229,10 +247,19 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
             if (null == $proxy) {
                 continue;
             }
-
             foreach ($names as $name) {
                 $_SERVER[$name] = $proxy;
             }
+        }
+    }
+
+    /**
+     * Record proxy env.
+     */
+    protected function recordProxyEnvIfNull()
+    {
+        if (null === $this->originProxyEnv) {
+            $this->originProxyEnv = $this->getProxyEnv();
         }
     }
 

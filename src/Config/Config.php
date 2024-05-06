@@ -106,7 +106,7 @@ final class Config
             }
 
             if ($protocol !== $proxy['protocol']) {
-                continue;
+                //continue;
             }
 
             $nonProxyHosts = isset($proxy['nonProxyHosts']) ? $proxy['nonProxyHosts'] : null;
