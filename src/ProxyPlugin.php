@@ -97,8 +97,8 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
     protected function getProxyProtocol()
     {
         return array(
-            'http' => array('http_proxy', 'HTTP_PROXY', 'CGI_HTTP_PROXY'),
             'https' => array('https_proxy', 'HTTPS_PROXY', 'CGI_HTTPS_PROXY'),
+            'http' => array('http_proxy', 'HTTP_PROXY', 'CGI_HTTP_PROXY'),
         );
     }
 
@@ -110,8 +110,6 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
     {
         $this->io = $io;
         $this->config = ConfigBuilder::build($composer, $io);
-
-        $this->recordProxyEnv();
     }
 
     /**
@@ -123,35 +121,67 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
     public function onPluginPreFileDownload(PreFileDownloadEvent $event)
     {
         /** Record the previous value. */
-        $this->recordProxyEnv();
+        $proxyEnv = $this->getProxyEnv();
 
         /** Set the current agent based on the configuration. */
         $this->setConfigProxies($event->getProcessedUrl());
-        $this->resetProxyManager($event);
+
+        /** Reset proxyManager configuration */
+        if (null !== ($proxyManager = $this->getProxyManager($event))) {
+            $this->resetProxyManager($proxyManager);
+        }
 
         /** Restore the previous configuration */
-        $this->clearProxyEnv();
-        $this->reductionProxyEnv();
+        $this->setProxyEnv($proxyEnv);
+    }
+
+    /**
+     * @return ProxyManager
+     * @throws ReflectionException
+     */
+    protected function getProxyManager(PreFileDownloadEvent $event)
+    {
+        if (method_exists($event, 'getHttpDownloader')) {
+            $httpDownloader = $event->getHttpDownloader();
+
+            $reflection = new ReflectionClass($httpDownloader);
+            if ($reflection->hasProperty('curl')) {
+                $curlProperty = $reflection->getProperty('curl');
+                $curlProperty->setAccessible(true);
+                $curlDownloader = $curlProperty->getValue($httpDownloader);
+
+                $reflection = new ReflectionClass($curlDownloader);
+                if ($reflection->hasProperty('proxyManager')) {
+                    $proxyManagerProperty = $reflection->getProperty('proxyManager');
+                    $proxyManagerProperty->setAccessible(true);
+                    return $proxyManagerProperty->getValue($curlDownloader);
+                }
+            }
+        }
+
+        $class = '\Composer\Util\Http\ProxyManager';
+        if (class_exists($class) && method_exists($class, 'getInstance')) {
+            return ProxyManager::getInstance();
+        }
+
+        return null;
     }
 
     /**
      * @throws ReflectionException
      */
-    protected function resetProxyManager(PreFileDownloadEvent $event)
+    protected function resetProxyManager(ProxyManager $proxyManager)
     {
-        $httpDownloader = $event->getHttpDownloader();
-
-        $reflection = new ReflectionClass($httpDownloader);
-        $curlProperty = $reflection->getProperty('curl');
-        $curlProperty->setAccessible(true);
-        $curlDownloader = $curlProperty->getValue($httpDownloader);
-
-        $reflection = new ReflectionClass($curlDownloader);
-        $proxyManagerProperty = $reflection->getProperty('proxyManager');
-        $proxyManagerProperty->setAccessible(true);
-        $proxyManager = $proxyManagerProperty->getValue($curlDownloader);
-
         $reflection = new ReflectionClass($proxyManager);
+
+        if (!$reflection->hasMethod('initProxyData')
+            && $reflection->hasMethod('getProxyData')
+        ) {
+            /** @see ProxyManager::getProxyData() */
+            $getProxyDataMethod = $reflection->getMethod('getProxyData');
+            $getProxyDataMethod->invoke($proxyManager);
+            return;
+        }
 
         /** @see ProxyManager::$fullProxy */
         $fullProxyProperty = $reflection->getProperty('fullProxy');
@@ -209,35 +239,28 @@ class ProxyPlugin implements PluginInterface, EventSubscriberInterface
     /**
      * Record proxy env.
      */
-    protected function recordProxyEnv()
+    protected function getProxyEnv()
     {
-        $this->originProxyEnv = array();
+        $proxyEnv = array();
         foreach ($this->getProxyEnvNames() as $name) {
             if (array_key_exists($name, $_SERVER)) {
-                $this->originProxyEnv[$name] = $_SERVER[$name];
+                $proxyEnv[$name] = $_SERVER[$name];
             }
         }
+        return $proxyEnv;
     }
 
     /**
      * Reduction proxy env.
      */
-    protected function reductionProxyEnv()
-    {
-        foreach ($this->getProxyEnvNames() as $name) {
-            if (array_key_exists($name, $this->originProxyEnv)) {
-                $_SERVER[$name] = $this->originProxyEnv[$name];
-            }
-        }
-    }
-
-    /**
-     * clear proxy env.
-     */
-    protected function clearProxyEnv()
+    protected function setProxyEnv($proxyEnv)
     {
         foreach ($this->getProxyEnvNames() as $name) {
             unset($_SERVER[$name]);
+
+            if (array_key_exists($name, $proxyEnv)) {
+                $_SERVER[$name] = $proxyEnv[$name];
+            }
         }
     }
 
