@@ -38,7 +38,7 @@ class ConfigBuilder
      *
      * @return Config
      */
-    public static function build(Composer $composer, IOInterface $io = null)
+    public static function build(Composer $composer, $io = null)
     {
         if (!static::$config instanceof Config) {
             $config = self::getConfigBase($composer, $io);
@@ -58,7 +58,7 @@ class ConfigBuilder
      *
      * @return array
      */
-    private static function getConfigBase(Composer $composer, IOInterface $io = null)
+    private static function getConfigBase(Composer $composer, $io = null)
     {
         $globalPackageConfig = self::getGlobalConfig($composer, 'composer', $io);
         $globalConfig = self::getGlobalConfig($composer, 'config', $io);
@@ -78,7 +78,7 @@ class ConfigBuilder
      *
      * @return array
      */
-    private static function getGlobalConfig(Composer $composer, $filename, IOInterface $io = null)
+    private static function getGlobalConfig(Composer $composer, $filename, $io = null)
     {
         $config = array();
 
